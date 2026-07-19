@@ -12,8 +12,6 @@ const PORT = process.env.PORT || 3000;
 const mongoUri = process.env.MONGODB_URI;
 const dbName = process.env.DB_NAME || 'instagram_login';
 const collectionName = process.env.COLLECTION_NAME || 'logins';
-const publicDir = path.join(__dirname, 'public');
-
 console.log('Loaded environment variables:');
 console.log('MONGODB_URI:', mongoUri ? 'Set' : 'Not set');
 console.log('DB_NAME:', dbName);
@@ -22,7 +20,7 @@ console.log('PORT:', PORT);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(publicDir));
+app.use(express.static(path.join(__dirname)));
 
 // Global variables to cache MongoDB client for serverless environments
 let cachedClient = null;
@@ -63,7 +61,7 @@ async function connectToMongo() {
 }
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(publicDir, 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.post('/login', async (req, res) => {
