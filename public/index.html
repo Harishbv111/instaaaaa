@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Login Page</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="page">
+    <section class="login-shell">
+      <div class="phone-preview" aria-hidden="true">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="preview-header">
+              <span class="preview-dot"></span>
+              <span class="preview-dot"></span>
+              <span class="preview-dot"></span>
+            </div>
+            <div class="preview-card preview-card-large"></div>
+            <div class="preview-grid">
+              <div class="preview-card"></div>
+              <div class="preview-card"></div>
+              <div class="preview-card"></div>
+              <div class="preview-card"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-column">
+        <div class="panel">
+          <div class="brand">Instagram</div>
+          <p class="subtitle">Sign in to see photos and videos from your friends.</p>
+
+          <form class="form" id="loginForm" onsubmit="return false;">
+            <div class="input-field">
+              <input type="text" name="username" placeholder="Phone number, username, or email" class="input" required>
+            </div>
+            <div class="input-field">
+              <input type="password" name="password" placeholder="Password" class="input" required>
+            </div>
+            <p id="formMessage" class="form-message" aria-live="polite"></p>
+            <button type="submit" class="submit-btn" id="submitButton">Log In</button>
+          </form>
+
+          <div class="or">
+            <span class="line"></span>
+            <span>OR</span>
+            <span class="line"></span>
+          </div>
+
+          <div class="social-login">Log in with Facebook</div>
+          <div class="forgot">
+            <a href="#">Forgot password?</a>
+          </div>
+        </div>
+
+        <div class="panel signup-panel">
+          <p>Don't have an account? <a href="#">Sign up</a></p>
+        </div>
+
+        <div class="apps">
+          <p>Get the app.</p>
+          <div class="store-links">
+            <a href="#" class="store-badge">App Store</a>
+            <a href="#" class="store-badge">Google Play</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="links">
+        <a href="#">About</a>
+        <a href="#">Support</a>
+        <a href="#">Press</a>
+        <a href="#">API</a>
+        <a href="#">Jobs</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Directory</a>
+        <a href="#">Profiles</a>
+        <a href="#">Hashtags</a>
+        <a href="#">Language</a>
+      </div>
+      <div class="copyright">© 2019 Instagram</div>
+    </footer>
+  </main>
+
+  <script src="/client.js"></script>
+</body>
+</html>
