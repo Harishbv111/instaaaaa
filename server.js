@@ -1,13 +1,23 @@
 const express = require('express');
 const path = require('path');
 const { MongoClient } = require('mongodb');
+const dns = require('dns');
 require('dotenv').config();
+
+// Set custom DNS servers to fix SRV resolution issues
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const mongoUri = process.env.MONGODB_URI;
 const dbName = process.env.DB_NAME || 'instagram_login';
 const collectionName = process.env.COLLECTION_NAME || 'logins';
+
+console.log('Loaded environment variables:');
+console.log('MONGODB_URI:', mongoUri ? 'Set' : 'Not set');
+console.log('DB_NAME:', dbName);
+console.log('COLLECTION_NAME:', collectionName);
+console.log('PORT:', PORT);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -25,7 +35,13 @@ async function connectToMongo() {
   }
 
   try {
-    mongoClient = new MongoClient(mongoUri);
+    mongoClient = new MongoClient(mongoUri, {
+      serverSelectionTimeoutMS: 15000,
+      connectTimeoutMS: 15000,
+      tls: true,
+      tlsAllowInvalidCertificates: false,
+      tlsAllowInvalidHostnames: false
+    });
     await mongoClient.connect();
     db = mongoClient.db(dbName);
     connectionErrorMessage = null;
@@ -33,6 +49,7 @@ async function connectToMongo() {
   } catch (error) {
     connectionErrorMessage = error.message;
     console.error('MongoDB connection failed:', error.message);
+    console.error('Full error:', error);
   }
 }
 
