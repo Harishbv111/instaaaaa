@@ -23,37 +23,43 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
-let mongoClient = null;
-let db = null;
-let connectionErrorMessage = null;
+// Global variables to cache MongoDB client for serverless environments
+let cachedClient = null;
+let cachedDb = null;
 
 async function connectToMongo() {
   if (!mongoUri) {
-    connectionErrorMessage = 'MONGODB_URI is not set. Login submissions will not be saved until it is configured.';
-    console.log(connectionErrorMessage);
-    return;
+    console.error('MONGODB_URI is not set.');
+    return { client: null, db: null };
+  }
+
+  // Use cached client if available
+  if (cachedClient && cachedDb) {
+    console.log('Using cached MongoDB connection');
+    return { client: cachedClient, db: cachedDb };
   }
 
   try {
-    mongoClient = new MongoClient(mongoUri, {
-      serverSelectionTimeoutMS: 15000,
-      connectTimeoutMS: 15000,
-      tls: true,
-      tlsAllowInvalidCertificates: false,
-      tlsAllowInvalidHostnames: false
+    const client = new MongoClient(mongoUri, {
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000,
+      tls: true
     });
-    await mongoClient.connect();
-    db = mongoClient.db(dbName);
-    connectionErrorMessage = null;
+    await client.connect();
+    const db = client.db(dbName);
+
+    // Cache the client and db
+    cachedClient = client;
+    cachedDb = db;
+
     console.log(`Connected to MongoDB Atlas database: ${dbName}`);
+    return { client, db };
   } catch (error) {
-    connectionErrorMessage = error.message;
     console.error('MongoDB connection failed:', error.message);
     console.error('Full error:', error);
+    return { client: null, db: null, error: error.message };
   }
 }
-
-connectToMongo();
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -67,10 +73,12 @@ app.post('/login', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Username and password are required.' });
   }
 
+  const { db, error } = await connectToMongo();
+
   if (!db) {
     return res.status(500).json({
       success: false,
-      message: connectionErrorMessage || 'MongoDB Atlas is not configured. Set MONGODB_URI in your environment before trying again.'
+      message: error || 'MongoDB Atlas connection failed.'
     });
   }
 
@@ -92,6 +100,12 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+// Listen only if running locally (not in Vercel serverless)
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+  });
+}
+
+// Export the app for Vercel serverless functions
+module.exports = app;
